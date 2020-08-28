@@ -1,0 +1,180 @@
+USE quanlychungcu
+create procedure psThemHoaDonDien
+    @MAHOADONDIEN NVARCHAR (10),
+    @TENHOADON   NVARCHAR (30),
+    @MANHANVIEN   NVARCHAR (10),
+    @MAHOGD       NVARCHAR (10),
+    @MACANHO      NVARCHAR (10),
+    @NGAYIN      DATETIME,
+    @TONGTIEN    FLOAT,
+    @GHICHU       NVARCHAR (50)
+as
+begin transaction
+if exists (select * from HOADONDIEN where MAHOADONDIEN = MAHOADONDIEN)
+		return
+else
+		insert into HOADONDIEN values (@MAHOADONDIEN,@TENHOADON,@MANHANVIEN,@MAHOGD,@MACANHO,@NGAYIN,@TONGTIEN,@GHICHU)
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+
+create proc psXoaHoaDonDien @MAHOADONDIEN NVARCHAR (10)
+as
+begin transaction
+		delete from HOADONDIEN where MAHOADONDIEN = @MAHOADONDIEN		
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+
+
+create procedure psSuaHoaDonDien (@MAHOADONDIEN NVARCHAR (10),
+    @TENHOADON   NVARCHAR (30),
+    @MANHANVIEN   NVARCHAR (10),
+    @MAHOGD       NVARCHAR (10),
+    @MACANHO      NVARCHAR (10),
+    @NGAYIN      DATETIME,
+    @TONGTIEN    FLOAT (53),
+    @GHICHU       NVARCHAR (50))
+as
+begin transaction
+	if not exists (select * from HOADONDIEN where MAHOADONDIEN = @MAHOADONDIEN)
+		return
+	else
+		update HOADONDIEN set TENHOADON=@TENHOADON, MANHANVIEN=@MANHANVIEN, MAHOGD=@MAHOGD, MACANHO=@MACANHO, NGAYIN=@NGAYIN, TONGTIEN=@TONGTIEN, GHICHU=@GHICHU
+							where MAHOADONDIEN=@MAHOADONDIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+
+
+CREATE procedure psThemChiTietHoaDonDien
+    @MAHOADONDIEN NVARCHAR (10),
+    @SOLUONG      INT,
+    @DONGIA       FLOAT,
+    @GHICHU       NVARCHAR (50)
+as
+begin transaction
+		insert into CTHDDIEN values (@MAHOADONDIEN, @SOLUONG, @DONGIA, @GHICHU)
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+
+create procedure psSuaChiTietHoaDonDien
+    @MAHOADONDIEN NVARCHAR (10),
+    @SOLUONG      INT,
+    @GHICHU       NVARCHAR (50)
+as
+begin transaction
+	if not exists (select * from CTHDDIEN where MAHOADONDIEN = @MAHOADONDIEN)
+		return
+	else
+		update CTHDDIEN set SOLUONG=@SOLUONG,GHICHU=@GHICHU WHERE MAHOADONDIEN=@MAHOADONDIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+create proc psXoaChiTietHoaDonDien @MAHOADONDIEN NVARCHAR (10)
+as
+begin transaction
+		delete from CTHDDIEN where MAHOADONDIEN = @MAHOADONDIEN		
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+
+create procedure psHienThiHoGiaDinh
+as
+begin transaction
+	select * from HOGIADINH
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+
+create procedure psHienThiCanHo
+as
+begin transaction
+	select * from CANHO
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+
+
+create procedure psHienThiDanhSachChiTietHoaDonDien
+as
+begin transaction
+	select * from CTHDDIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+
+create procedure psHienThiHoaDonDien
+as
+begin transaction
+	select * from HOADONDIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+
+create procedure psThemTongTienChoHoaDonDien
+    @MAHOADONDIEN NVARCHAR (10),
+    @TONGTIEN       FLOAT
+as
+begin transaction
+		update HOADONDIEN set TONGTIEN=@TONGTIEN where MAHOADONDIEN=@MAHOADONDIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+
+create procedure psTimKiemChiTietHoaDonDienTheoMaHoaDon @MAHOADONDIEN nvarchar(10)
+as
+begin transaction
+	select * from CTHDDIEN where MAHOADONDIEN = @MAHOADONDIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+create proc psHienThiHoaDonVaChiTietHoaDonDien
+as
+begin transaction
+	select HOADONDIEN.MAHOADONDIEN, TENHOADON, SOLUONG, DONGIA, MANHANVIEN, MAHOGD, MACANHO, NGAYIN, SOLUONG*DONGIA AS THANHTIEN, HOADONDIEN.GHICHU
+	FROM HOADONDIEN, CTHDDIEN
+	WHERE HOADONDIEN.MAHOADONDIEN=CTHDDIEN.MAHOADONDIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+
+
+create proc psHienThiHoaDonVaChiTietHoaDonDienTheoMaHoaDon @MAHOADONDIEN nvarchar(10)
+as
+begin transaction
+	select HOADONDIEN.MAHOADONDIEN, TENHOADON, SOLUONG, DONGIA, MANHANVIEN, MAHOGD, MACANHO, NGAYIN, SOLUONG*DONGIA AS THANHTIEN, HOADONDIEN.GHICHU
+	FROM HOADONDIEN, CTHDDIEN
+	WHERE HOADONDIEN.MAHOADONDIEN=CTHDDIEN.MAHOADONDIEN
+	and HOADONDIEN.MAHOADONDIEN=@MAHOADONDIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION

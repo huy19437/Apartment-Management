@@ -1,0 +1,83 @@
+USE quanlychungcu
+
+create procedure psThemNhanVien 
+	@MANHANVIEN NVARCHAR(10),
+	@HOTEN NVARCHAR(30),
+	@GIOITINH NVARCHAR(10),
+	@DIACHI NVARCHAR(50),
+	@SDT NVARCHAR(10),
+	@NGAYSINH DATE,
+	@EMAIL NVARCHAR(30),
+	@SOCMND NVARCHAR(18),
+	@HINHANH IMAGE,
+	@MAPHONGBAN NVARCHAR(10)
+as
+begin transaction
+	if exists (select * from NHANVIEN where @MANHANVIEN = MANHANVIEN)
+		return
+	else
+		insert into NHANVIEN values (@MANHANVIEN, @HOTEN, @GIOITINH, @DIACHI, @SDT, @NGAYSINH,
+		 @EMAIL, @SOCMND, @HINHANH, @MAPHONGBAN)
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+create procedure psSuaNhanVien 
+	@MANHANVIEN NVARCHAR(10),
+	@HOTEN NVARCHAR(30),
+	@GIOITINH NVARCHAR(10),
+	@DIACHI NVARCHAR(50),
+	@SDT NVARCHAR(10),
+	@NGAYSINH DATE,
+	@EMAIL NVARCHAR(30),
+	@SOCMND NVARCHAR(18),
+	@HINHANH IMAGE,
+	@MAPHONGBAN NVARCHAR(10)
+as
+begin transaction
+	if not exists (select * from NHANVIEN where @MANHANVIEN = MANHANVIEN)
+		return
+	else
+		update NHANVIEN set HOTEN = @HOTEN, GIOITINH = @GIOITINH, DIACHI = @DIACHI, SDT = @SDT, NGAYSINH = @NGAYSINH, 
+		EMAIL = @EMAIL, SOCMND = @SOCMND, HINHANH = @HINHANH, MAPHONGBAN = @MAPHONGBAN where MANHANVIEN = @MANHANVIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+create procedure psXoaNhanVien @MANHANVIEN NVARCHAR(10)
+as
+begin transaction
+	delete from NHANVIEN where @MANHANVIEN = MANHANVIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+create procedure psTimKiemNhanVien @MANHANVIEN NVARCHAR(10)
+as
+begin transaction
+	select * from NHANVIEN where @MANHANVIEN = MANHANVIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+create procedure psHienThiPhongBan
+as
+begin transaction
+	select * from PHONGBAN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
+
+create procedure psHienThiNhanVien
+as
+begin transaction
+	select * from NHANVIEN
+if (@@ERROR <> 0)
+ROLLBACK TRANSACTION
+else
+COMMIT TRANSACTION
